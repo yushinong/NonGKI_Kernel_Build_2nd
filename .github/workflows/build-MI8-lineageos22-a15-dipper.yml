@@ -122,6 +122,10 @@ jobs:
           # Only ${{ env.DEVICE_NAME }} use it.
           cd $GITHUB_WORKSPACE/device_kernel
           # Nothing
+      - name: Remove SUSFS include
+        run: |
+          cd $GITHUB_WORKSPACE/device_kernel
+          sed -i 's/^#include <linux\/susfs_def.h>$/\/\/ &/' fs/namespace.c
 
       - name: 🧰 Patch Kernel of Re:Kernel
         uses: ./.github/workflows/patch-rekernel
