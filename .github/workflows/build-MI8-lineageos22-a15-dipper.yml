@@ -28,9 +28,7 @@ env:
   DEFCONFIG_NAME : "sdm845_defconfig"
   DEFCONFIG_ORIGIN_IMAGE: ""
   DEFCONFIG_FROM_BOOT: false
-   # 关键修改：开启合并，并指定 dipper 碎片
-  BUILD_OTHER_CONFIG: "true"
-  MERGE_CONFIG_FILES: "vendor/xiaomi/dipper_defconfig"
+ 
 
   KERNELSU_SOURCE : ""
   KERNELSU_BRANCH : ""
@@ -87,8 +85,9 @@ env:
   BUILD_DEBUGGER: "false" # Output build errors.
   SKIP_PATCH: "false" # Ignore errors found in Patch Debugger.
 
-  BUILD_OTHER_CONFIG: "false" # Merge config files.
-  MERGE_CONFIG_FILES: "vendor/debugfs.config,vendor/lahaina_QGKI.config"
+    # 关键修改：开启合并，并指定 dipper 碎片
+  BUILD_OTHER_CONFIG: "true"
+  MERGE_CONFIG_FILES: "vendor/xiaomi/dipper_defconfig"
 
   FREE_MORE_SPACE: "false" # if u want get more space, enabled it.
 
