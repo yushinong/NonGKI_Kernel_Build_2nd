@@ -13,7 +13,7 @@ env:
   EXTRA_CMDS : "LD=ld.lld LLVM=1 LLVM_IAS=1"
 
   KERNEL_SOURCE : "https://github.com/Coconutat/android_kernel_xiaomi_sdm845_lineageos_Exp.git"
-  KERNEL_BRANCH : "lineage-22.2-ReSukiSU"
+  KERNEL_BRANCH : "lineage-22.2"
 
   CLANG_SOURCE : "https://github.com/llvm/llvm-project/releases/download/llvmorg-19.1.7/LLVM-19.1.7-Linux-X64.tar.xz"
   CLANG_BRANCH : ""
