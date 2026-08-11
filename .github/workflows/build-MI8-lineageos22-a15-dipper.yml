@@ -28,6 +28,9 @@ env:
   DEFCONFIG_NAME : "sdm845_defconfig"
   DEFCONFIG_ORIGIN_IMAGE: ""
   DEFCONFIG_FROM_BOOT: false
+   # 关键修改：开启合并，并指定 dipper 碎片
+  BUILD_OTHER_CONFIG: "true"
+  MERGE_CONFIG_FILES: "vendor/xiaomi/dipper_defconfig"
 
   KERNELSU_SOURCE : ""
   KERNELSU_BRANCH : ""
@@ -68,7 +71,7 @@ env:
 
   HOOK_METHOD: "syscall" # Manual hook method -> syscall.
 
-  KERNEL_PATCH: "false" # If your kernel version is <= 4.9, you have the option of enabling the patch to patch the kernel_write and kernel_read functions.
+  KERNEL_PATCH: "true" # If your kernel version is <= 4.9, you have the option of enabling the patch to patch the kernel_write and kernel_read functions.
 
   KPM_ENABLE: "false" # Anyone devices.
   KPM_INLINE: "false" # Only use it for SukiSU-Ultra.
