@@ -87,7 +87,7 @@ env:
 
     # 关键修改：开启合并，并指定 dipper 碎片
   BUILD_OTHER_CONFIG: "true"
-  MERGE_CONFIG_FILES: "vendor/xiaomi/dipper_config"
+  MERGE_CONFIG_FILES: "vendor/xiaomi/dipper.config"
 
   FREE_MORE_SPACE: "false" # if u want get more space, enabled it.
 
