@@ -152,6 +152,20 @@ jobs:
           echo 'CONFIG_KSU_SUSFS_SUS_MOUNT=y' >> arch/arm64/configs/vendor/xiaomi/mi845_defconfig
           echo 'CONFIG_KSU_SUSFS_SUS_KSTAT=y' >> arch/arm64/configs/vendor/xiaomi/mi845_defconfig
           echo 'CONFIG_KSU_SUSFS_TRY_UMOUNT=y' >> arch/arm64/configs/vendor/xiaomi/mi845_defconfig
+      # ====== 补全驱动源码（新增） ======
+      - name: Manually clone susfs driver
+        run: |
+          cd $GITHUB_WORKSPACE/device_kernel
+          if [ ! -d drivers/susfs ]; then
+            echo "🔽 Cloning susfs4ksu driver (kernel-4.9 branch)..."
+            git clone https://gitlab.com/simonpunk/susfs4ksu.git -b kernel-4.9 drivers/susfs || \
+            git clone https://gitlab.com/simonpunk/susfs4ksu.git -b main drivers/susfs
+          fi
+          grep -q "source \"drivers/susfs/Kconfig\"" drivers/Kconfig || \
+            sed -i '/endmenu/i\source "drivers/susfs/Kconfig"' drivers/Kconfig
+          grep -q "obj-\$(CONFIG_KSU_SUSFS) += susfs/" drivers/Makefile || \
+            echo "obj-\$(CONFIG_KSU_SUSFS) += susfs/" >> drivers/Makefile
+          echo "✅ SUSFS driver ready."
       - name: 🚀 Build Process
         uses: ./.github/workflows/build-process
 
