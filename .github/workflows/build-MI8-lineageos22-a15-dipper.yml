@@ -135,7 +135,17 @@ jobs:
 
       - name: 🔒 Patch Kernel of Baseband Guard
         uses: ./.github/workflows/patch-baseband-guard
-      
+      - name: Disable EFI and VDSO32 in defconfig
+        run: |
+          cd $GITHUB_WORKSPACE/device_kernel
+          # 删除原有的 EFI 和 VDSO 相关行（如果有）
+          sed -i '/^CONFIG_EFI=/d' arch/arm64/configs/vendor/xiaomi/mi845_defconfig
+          sed -i '/^CONFIG_COMPAT_VDSO=/d' arch/arm64/configs/vendor/xiaomi/mi845_defconfig
+          sed -i '/^CONFIG_VDSO32=/d' arch/arm64/configs/vendor/xiaomi/mi845_defconfig
+          # 追加禁用配置（注意顺序，确保覆盖）
+          echo '# CONFIG_EFI is not set' >> arch/arm64/configs/vendor/xiaomi/mi845_defconfig
+          echo '# CONFIG_COMPAT_VDSO is not set' >> arch/arm64/configs/vendor/xiaomi/mi845_defconfig
+          echo '# CONFIG_VDSO32 is not set' >> arch/arm64/configs/vendor/xiaomi/mi845_defconfig
       - name: 🚀 Build Process
         uses: ./.github/workflows/build-process
 
