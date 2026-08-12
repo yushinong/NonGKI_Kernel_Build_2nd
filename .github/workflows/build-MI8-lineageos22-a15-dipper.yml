@@ -135,7 +135,15 @@ jobs:
 
       - name: 🔒 Patch Kernel of Baseband Guard
         uses: ./.github/workflows/patch-baseband-guard
- 
+           # ========== 插入下面这个 ==========
+      - name: Disable EFI and VDSO32
+        run: |
+          cd $GITHUB_WORKSPACE/device_kernel
+          ./scripts/config --file out/.config --disable EFI
+          ./scripts/config --file out/.config --disable VDSO32
+          make O=out ARCH=arm64 olddefconfig
+          grep -E "CONFIG_EFI|CONFIG_VDSO32" out/.config || true
+      # ==================================
       - name: 🚀 Build Process
         uses: ./.github/workflows/build-process
 
