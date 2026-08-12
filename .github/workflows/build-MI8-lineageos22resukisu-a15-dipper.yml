@@ -168,9 +168,7 @@ jobs:
               echo "obj-\$(CONFIG_KSU_SUSFS) += susfs/" >> drivers/Makefile
             echo "✅ SUSFS driver ready."
 
-      # ====== 然后打补丁（修改内核核心代码） ======
-      - name: 🪝 Patch Kernel of SUSFS
-        uses: ./.github/workflows/patch-susfs
+      
       - name: 🚀 Build Process
         uses: ./.github/workflows/build-process
 
