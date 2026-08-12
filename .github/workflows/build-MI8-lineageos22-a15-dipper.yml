@@ -25,7 +25,7 @@ env:
   GCC_32_BRANCH : "android12L-release"
 
   DEFCONFIG_SOURCE: ""
-  DEFCONFIG_NAME : "sdm845_defconfig"
+  DEFCONFIG_NAME: "vendor/xiaomi/mi845_defconfig"
   DEFCONFIG_ORIGIN_IMAGE: ""
   DEFCONFIG_FROM_BOOT: false
  
@@ -135,13 +135,7 @@ jobs:
 
       - name: 🔒 Patch Kernel of Baseband Guard
         uses: ./.github/workflows/patch-baseband-guard
-      # ========== 插入下面这个步骤 ==========
-      - name: Fix EFI linker error
-        run: |
-          cd $GITHUB_WORKSPACE/device_kernel
-          sed -i 's/^CONFIG_EFI=y/# CONFIG_EFI is not set/' out/.config || true
-          make O=out ARCH=arm64 olddefconfig
-      # ====================================
+ 
       - name: 🚀 Build Process
         uses: ./.github/workflows/build-process
 
