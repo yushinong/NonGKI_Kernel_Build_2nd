@@ -10,13 +10,13 @@ env:
   DEVICE_CODENAME : "dipper"
 
   CUSTOM_CMDS : "CLANG_TRIPLE=aarch64-linux-gnu-"
-  EXTRA_CMDS : "LD=ld.lld LLVM=1 LLVM_IAS=1"
+  EXTRA_CMDS : "LD=ld.lld"
 
   KERNEL_SOURCE : "https://github.com/Coconutat/android_kernel_xiaomi_sdm845_lineageos_Exp.git"
-  KERNEL_BRANCH : "lineage-22.2"
+  KERNEL_BRANCH : "lineage-22.2-ReSukiSU"
 
-  CLANG_SOURCE : "https://github.com/llvm/llvm-project/releases/download/llvmorg-19.1.7/LLVM-19.1.7-Linux-X64.tar.xz"
-  CLANG_BRANCH : ""
+  CLANG_SOURCE : "https://github.com/LineageOS/android_prebuilts_clang_kernel_linux-x86_clang-r416183b.git"
+  CLANG_BRANCH : "lineage-20.0"
 
   GCC_GNU : false
   GCC_64_SOURCE : "https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9.git"
@@ -56,27 +56,28 @@ env:
   PACK_KMODULES: "false" # if u want pack kernel modules (.ko) into Anykernel3.
 
   KERNELSU_METHOD: "shell" # shell, manual and only.
+  KERNELSU_SUS_PATCH: "false" # if u need manual susfs patch to kernelsu.
 
   PATCHES_SOURCE: "JackA1ltman/NonGKI_Kernel_Patches" # [your_name]/[your_patch] -> gooder123/NonGKI_Patcher
   PATCHES_BRANCH: "mi_kernel" # [your_branch] -> main
 
-  SUSFS_FOLDER_FIXED: "" # Fill in your patch prefix directory here. Leave it blank if there isn't one. -> your_folder
-  SUSFS_PATCH_FIXED: "" # Fill in your patches here. If there are multiple patches, please separate them with a comma. Leave it blank if there isn't one. -> patch1,patch2
+  SUSFS_FOLDER_FIXED: "mix2s_evox_a15" # Fill in your patch prefix directory here. Leave it blank if there isn't one. -> your_folder
+  SUSFS_PATCH_FIXED: "susfs_fixed" # Fill in your patches here. If there are multiple patches, please separate them with a comma. Leave it blank if there isn't one. -> patch1,patch2
 
-  REKERNEL_ENABLE: "false" # if u need Re:Kernel.
-  DROIDSPACES_ENABLE: "false" # if u need Droidspaces or LXC/Docker.
+  REKERNEL_ENABLE: "true" # if u need Re:Kernel.
+  DROIDSPACES_ENABLE: "true" # if u need Droidspaces or LXC/Docker.
   NOMOUNT_ENABLE: "false" # if u need NoMount.
 
   HOOK_METHOD: "syscall" # Manual hook method -> syscall.
 
-  KERNEL_PATCH: "true" # If your kernel version is <= 4.9, you have the option of enabling the patch to patch the kernel_write and kernel_read functions.
+  KERNEL_PATCH: "false" # If your kernel version is <= 4.9, you have the option of enabling the patch to patch the kernel_write and kernel_read functions.
 
   KPM_ENABLE: "false" # Anyone devices.
   KPM_INLINE: "false" # Only use it for SukiSU-Ultra.
   KPM_KPATCH_NEXT: "false" # If u want hook KPatch-Next in build step.
   KPM_PATCH_SOURCE: "https://raw.githubusercontent.com/SukiSU-Ultra/SukiSU_patch/refs/heads/main/kpm/patch_linux" # If u want to use KPM Inline,so you need set patch exec file source -> raw.githubusercontent.com/Test/Test/patch .
 
-  BASEBAND_GUARD_ENABLE: "false" #if u want prevent unauthorized writes to critical partitions/device nodes.
+  BASEBAND_GUARD_ENABLE: "true" #if u want prevent unauthorized writes to critical partitions/device nodes.
   BASEBAND_GUARD_BOOT: "false" #if u want to protect boot partition.
 
   GENERATE_DTB: "false" # if u kernel need DTB , but cannot auto generate it. (Only Anykernel3).
@@ -111,7 +112,8 @@ jobs:
       - name: ⚙️ Get neccssary tools
         uses: ./.github/workflows/build-ready
 
-     
+      - name: 🪝 Patch Kernel of SUSFS
+        uses: ./.github/workflows/patch-susfs
 
       - name: 🔗 Patch for no-kprobe
         uses: ./.github/workflows/patch-no-kprobe
@@ -131,44 +133,7 @@ jobs:
 
       - name: 🔒 Patch Kernel of Baseband Guard
         uses: ./.github/workflows/patch-baseband-guard
-      - name: Disable EFI and VDSO32 in defconfig
-        run: |
-          cd $GITHUB_WORKSPACE/device_kernel
-          # 删除原有的 EFI 和 VDSO 相关行（如果有）
-          sed -i '/^CONFIG_EFI=/d' arch/arm64/configs/vendor/xiaomi/mi845_defconfig
-          sed -i '/^CONFIG_COMPAT_VDSO=/d' arch/arm64/configs/vendor/xiaomi/mi845_defconfig
-          sed -i '/^CONFIG_VDSO32=/d' arch/arm64/configs/vendor/xiaomi/mi845_defconfig
-          # 追加禁用配置（注意顺序，确保覆盖）
-          echo '# CONFIG_EFI is not set' >> arch/arm64/configs/vendor/xiaomi/mi845_defconfig
-          echo '# CONFIG_COMPAT_VDSO is not set' >> arch/arm64/configs/vendor/xiaomi/mi845_defconfig
-          echo '# CONFIG_VDSO32 is not set' >> arch/arm64/configs/vendor/xiaomi/mi845_defconfig
-      - name: Enable SUSFS config
-        run: |
-          cd $GITHUB_WORKSPACE/device_kernel
-          # 直接追加到 defconfig 源文件（这样 make defconfig 时会自动包含）
-          echo 'CONFIG_KSU=y' >> arch/arm64/configs/vendor/xiaomi/mi845_defconfig
-          echo 'CONFIG_KSU_SUSFS=y' >> arch/arm64/configs/vendor/xiaomi/mi845_defconfig
-          echo 'CONFIG_KSU_SUSFS_SUS_PATH=y' >> arch/arm64/configs/vendor/xiaomi/mi845_defconfig
-          echo 'CONFIG_KSU_SUSFS_SUS_MOUNT=y' >> arch/arm64/configs/vendor/xiaomi/mi845_defconfig
-          echo 'CONFIG_KSU_SUSFS_SUS_KSTAT=y' >> arch/arm64/configs/vendor/xiaomi/mi845_defconfig
-          echo 'CONFIG_KSU_SUSFS_TRY_UMOUNT=y' >> arch/arm64/configs/vendor/xiaomi/mi845_defconfig
-     
-      - name: Manually clone susfs driver
-        run: |
-            cd $GITHUB_WORKSPACE/device_kernel
-            if [ ! -d drivers/susfs ]; then
-              echo "🔽 Cloning susfs4ksu driver (kernel-4.9 branch)..."
-              git clone https://gitlab.com/simonpunk/susfs4ksu.git -b kernel-4.9 drivers/susfs || \
-              git clone https://gitlab.com/simonpunk/susfs4ksu.git -b main drivers/susfs
-            fi
-            # 确保 Kconfig 和 Makefile 有引用（如果 patch-susfs 也会加，重复了也没事）
-            grep -q "source \"drivers/susfs/Kconfig\"" drivers/Kconfig || \
-              sed -i '/endmenu/i\source "drivers/susfs/Kconfig"' drivers/Kconfig
-            grep -q "obj-\$(CONFIG_KSU_SUSFS) += susfs/" drivers/Makefile || \
-              echo "obj-\$(CONFIG_KSU_SUSFS) += susfs/" >> drivers/Makefile
-            echo "✅ SUSFS driver ready."
 
-      
       - name: 🚀 Build Process
         uses: ./.github/workflows/build-process
 
