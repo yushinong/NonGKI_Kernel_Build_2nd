@@ -135,7 +135,10 @@ jobs:
 
       - name: 🔒 Patch Kernel of Baseband Guard
         uses: ./.github/workflows/patch-baseband-guard
-
+      - name: Fix EFI stub linking
+        run: |
+          cd $GITHUB_WORKSPACE/device_kernel
+          sed -i 's/^LDFLAGS_vmlinux =/LDFLAGS_vmlinux = --undefined-version /' Makefile || echo "LDFLAGS_vmlinux += --undefined-version" >> Makefile
       - name: 🚀 Build Process
         uses: ./.github/workflows/build-process
 
