@@ -133,7 +133,11 @@ jobs:
 
       - name: 🔒 Patch Kernel of Baseband Guard
         uses: ./.github/workflows/patch-baseband-guard
-
+      # ====== 新增修复步骤 ======
+      - name: Fix SELinux unused variable
+        run: |
+          cd $GITHUB_WORKSPACE/device_kernel
+          sed -i '157d' security/selinux/avc.c
       - name: 🚀 Build Process
         uses: ./.github/workflows/build-process
 
