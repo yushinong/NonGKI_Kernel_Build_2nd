@@ -1,4 +1,4 @@
-name: Build MI8(dipper)(lineageos22)
+name: Build MI8(dipper)(lineageos22resukisu)
 
 on:
   workflow_call:
