@@ -25,7 +25,7 @@ env:
   GCC_32_BRANCH : "android12L-release"
 
   DEFCONFIG_SOURCE: ""
-  DEFCONFIG_NAME: "vendor/xiaomi/sdm660_defconfig"
+  DEFCONFIG_NAME: "vendor/sdm660_defconfig"
   DEFCONFIG_ORIGIN_IMAGE: ""
   DEFCONFIG_FROM_BOOT: false
  
@@ -87,7 +87,7 @@ env:
 
     # 关键修改：开启合并，并指定 dipper 碎片
   BUILD_OTHER_CONFIG: "true"
-  MERGE_CONFIG_FILES: "vendor/xiaomi/ginkgo.config"
+  MERGE_CONFIG_FILES: "vendor/ginkgo.config"
 
   FREE_MORE_SPACE: "false" # if u want get more space, enabled it.
 
